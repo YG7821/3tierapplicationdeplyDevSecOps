@@ -4,11 +4,11 @@ pipeline {
     environment {
         DOCKER_IMAGE = "yg7821/devopsexamapp:latest"
         SCANNER_HOME = tool 'sonar-scanner'
-		    AWS_CREDENTIALS_ID = 'aws-credentials'
-		    AWS_REGION = 'ap-south-1'
-		    EKS_CLUSTER_NAME = 'my-eks-cluster'
-		    ZAP_DIR = "${workspace}"
-		    TARGET_URL = 'http://65.0.131.40:5000'
+		AWS_CREDENTIALS_ID = 'aws-credentials'
+		AWS_REGION = 'ap-south-1'
+		EKS_CLUSTER_NAME = 'my-eks-cluster'
+		ZAP_DIR = "${workspace}"
+		TARGET_URL = 'http://65.0.131.40:5000'
     }
 
     stages {
@@ -103,14 +103,14 @@ pipeline {
 			         withDockerRegistry(credentialsId: 'docker') {
                      sh  """
                          docker run --user root \
-                         -v ${ZAP_DIR}:/zap/wrk/:rw \
+                         -v	${ZAP_DIR}:/zap/wrk/:rw \
                          zaproxy/zap-stable zap.sh -cmd -autorun /zap/wrk/zap.yaml \
                          -zapit ${TARGET_URL} \
-                             -quickout zap_report.html
+                         -quickout zap_report.html
                          """
 			         }     
             }
-		    } 
+     } 
 
     post {
         success {
