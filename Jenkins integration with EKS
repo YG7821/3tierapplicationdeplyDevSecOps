@@ -90,8 +90,13 @@ pipeline {
                         kubectl get nodes
                         
                         # Deploy application
-                        kubectl apply -f k8s/deployment.yaml
+                        kubectl apply -f k8s/configmap.yaml
+                        kubectl apply -f k8s/secret.yaml
+                        kubectl apply -f k8s/pv.yaml
+                        kubectl apply -f k8s/pvc.yaml
                         kubectl apply -f k8s/service.yaml
+                        kubectl apply -f k8s/deployment.yaml
+                        kubectl apply -f k8s/statefulset.yaml                        
                     """
                 }
             }
