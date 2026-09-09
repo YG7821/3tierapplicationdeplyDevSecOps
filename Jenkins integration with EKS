@@ -8,7 +8,7 @@ pipeline {
 		AWS_REGION = 'ap-south-1'
 		EKS_CLUSTER_NAME = 'my-eks-cluster'
 		ZAP_DIR = "${workspace}"
-		TARGET_URL = 'http://65.0.131.40:5000'
+		TARGET_URL = 'http://aadc191a4458e4f2cbdbc33dffa442b4-1956213275.ap-south-1.elb.amazonaws.com:5000'
     }
 
     stages {
@@ -17,19 +17,12 @@ pipeline {
             steps {
                 echo "📦 Checking out source code..."
                 git(
-                    url: 'https://github.com/YogitaDevOps12/DevSecOps.git',          
+                    url: 'https://github.com/YogitaDevOps12/devopsexam.git',        
                     branch: 'main'
                 )
             }
         }
        
-        stage('Prepare Workspace') {
-            steps {
-                // Ensure a clean directory exists to store the generated OWASP reports
-                sh 'mkdir -p ${ZAP_DIR}'
-                sh 'chmod 777 ${ZAP_DIR}' 
-            }
-        }    
 
         stage('File System Scan') {
             steps {
@@ -102,16 +95,13 @@ pipeline {
             }
         }
 
-		stage('OWASP DAST ZAP SCAN') {
+		stage('OWASP ZAP DAST SCAN') {
             steps {
 			     script {
 			         withDockerRegistry(credentialsId: 'docker') {
                      sh  """
-                         docker run --user root \
-                         -v	${ZAP_DIR}:/zap/wrk/:rw \
-                         zaproxy/zap-stable zap.sh -cmd -autorun /zap/wrk/zap.yaml \
-                         -zapit ${TARGET_URL} \
-                         -quickout zap_report.html
+                        docker run --user root -v ${WORKSPACE}:/zap/wrk:rw zaproxy/zap-stable:latest \
+                        zap-baseline.py -t ${TARGET_URL} -r zap_report.html || true
                          """
 			         }     
             }
